@@ -46,22 +46,64 @@ class Player {
         canvas.stroke();
     }
 
-    onPress(event) {
-        switch (event.key) {
-            case "w":
-                this.yVel = 13;
+    release(key, dt) {
+        switch (key) {
+            case "a":
+                this.xVel = -dt;
                 break;
             case "d":
-                this.xAccel += .4;
+                this.xVel = dt; 
                 break;
-            case "a":
-                this.xAccel -= .4;
-                break;
-        
         }
+
+    }
+
+    jump() {
+        this.yVel = 10;
     }
 }
 
 let player = new Player(100, 100);
-document.addEventListener("keydown", (event) => player.onPress(event), false);
+let JUMPPRESSED = false;
+let BUTTONPRESSED = false;
+let startTimeA = Date.now();
+let startTimeD = Date.now();
+let timeDiff = 0;
+document.addEventListener("keypress", (event) => {
+    if (!BUTTONPRESSED) {
+        BUTTONPRESSED = true;
+        switch (event.key) {
+            case "a":
+                startTimeA = Date.now();
+                break;
+            case "d":
+                startTimeD = Date.now();
+                break;
+        }
+    }
+    console.log(event.key);
+    console.log(JUMPPRESSED);
+    if (event.key = "w" && !JUMPPRESSED) {
+        console.log("HUH?");
+        player.jump();
+        JUMPPRESSED = true;
+    }
+}, false);
+
+document.addEventListener("keyup", (event) => {
+    BUTTONPRESSED = false;
+    switch (event.key) {
+        case "a":
+            timeDiff = Date.now() - startTimeA;
+            player.release(event.key, timeDiff / 50);
+            break;
+        case "d":
+            timeDiff = Date.now() - startTimeD;
+            player.release(event.key, timeDiff / 50);
+            break;
+        case "w":
+            JUMPPRESSED = false;
+            break;
+    }
+});
 setInterval(() => player.updatePos(), 16);
