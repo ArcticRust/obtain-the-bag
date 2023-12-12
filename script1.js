@@ -9,8 +9,8 @@ class Player {
         this.yAccel = -.6; // gravity
         this.boxWidth = 60;
         this.boxHeight = 40;
-        this.maxSpeed = 15;
-        this.chargeDivider = 25;
+        this.maxSpeed = 12;
+        this.chargeDivider = 70;
     }
 
     updatePos(timeDiff, AorDPressed) {
