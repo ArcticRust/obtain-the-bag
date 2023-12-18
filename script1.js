@@ -18,8 +18,8 @@ class Player {
     updatePos(timeDiff, AorDPressed, orbs) {
         let canvas = document.getElementById("usedCanvas").getContext("2d");
         canvas.beginPath();
-        canvas.clearRect(this.xPos- 11, this.yPos - 16, this.boxWidth + 22, this.boxHeight + 17);
-        canvas.stroke();
+        canvas.clearRect(this.xPos - 12, this.yPos - 16, this.boxWidth + 23, this.boxHeight / 4 + 2);
+        canvas.clearRect(this.xPos - 2, this.yPos - 1, this.boxWidth + 3, this.boxHeight + 3);
         this.xVel += this.xAccel;
         this.xPos += this.xVel;
         this.yVel += this.yAccel
@@ -44,14 +44,16 @@ class Player {
             this.yPos = 500 - this.boxHeight;
 
         this.incrementer += 1;
-        if (this.incrementer % 100 == 0) {
-            orbs.forEach(orb => {
-                if (orb[0] > this.xPos && orb[0] < this.xPos + this.boxWidth && orb[1] > this.yPos && orb[1] < this.yPos + this.boxHeight) {
-                    clearRect(orb[0], orb[1], 20, 20);
+        if (this.incrementer % 10 == 0 && orbs.length != 0) {
+            for (let i = 0; i < orbs.length; i++) {
+                let orb = orbs[i];
+                if (true) {
+                    canvas.clearRect(orb[0] - 1, orb[1] - 1, 42, 42);
+                    orbs.splice(i, 1);
+                    i -= 1;
                 }
-            });
+            }
         }
-        canvas.beginPath();
         canvas.fillStyle = "red";
         canvas.rect(this.xPos, this.yPos, this.boxWidth, this.boxHeight);
         canvas.fill();
@@ -115,6 +117,12 @@ document.addEventListener("keypress", (event) => {
         player.jump();
         JUMPPRESSED = true;
     }
+
+    if (event.key == "c") {
+        console.log(orbPositions);
+        console.log(player.xPos);
+        console.log(player.yPos);
+    }
 }, false);
 
 document.addEventListener("keyup", (event) => {
@@ -135,13 +143,13 @@ document.addEventListener("keyup", (event) => {
 });
 
 setInterval(() => player.updatePos((Date.now() - startTime) * BUTTONPRESSED, AorDPressed, orbPositions), 16);
-setInterval(() => spawnOrb(), 1000);
+setInterval(() => spawnOrb(), 2000);
 
 function spawnOrb() {
     let xPos = Math.random() * 800;
     let yPos = Math.random() * 140;
     let radius = 20;
-    orbPositions.push([xPos - radius, yPos - radius]);
+    orbPositions.push([xPos - radius + 100, 500 - (yPos + 10) - radius]);
     canvas.beginPath();
     canvas.arc(xPos + 100, 500 - (yPos + 10), radius, 0, 2 * Math.PI);
     canvas.fillStyle = "blue";
