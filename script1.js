@@ -10,13 +10,15 @@ class Player {
         this.boxWidth = 60;
         this.boxHeight = 40;
         this.maxSpeed = 12;
-        this.chargeDivider = 70;
+        this.chargeDivider = 40;
+        this.jumpVel = 13;
+        this.incrementer = 0;
     }
 
-    updatePos(timeDiff, AorDPressed) {
+    updatePos(timeDiff, AorDPressed, orbs) {
         let canvas = document.getElementById("usedCanvas").getContext("2d");
         canvas.beginPath();
-        canvas.clearRect(0, 0, 1000, 500);
+        canvas.clearRect(this.xPos- 11, this.yPos - 16, this.boxWidth + 22, this.boxHeight + 17);
         canvas.stroke();
         this.xVel += this.xAccel;
         this.xPos += this.xVel;
@@ -41,6 +43,14 @@ class Player {
         if (this.yPos > 500 - this.boxHeight)  
             this.yPos = 500 - this.boxHeight;
 
+        this.incrementer += 1;
+        if (this.incrementer % 100 == 0) {
+            orbs.forEach(orb => {
+                if (orb[0] > this.xPos && orb[0] < this.xPos + this.boxWidth && orb[1] > this.yPos && orb[1] < this.yPos + this.boxHeight) {
+                    clearRect(orb[0], orb[1], 20, 20);
+                }
+            });
+        }
         canvas.beginPath();
         canvas.fillStyle = "red";
         canvas.rect(this.xPos, this.yPos, this.boxWidth, this.boxHeight);
@@ -56,7 +66,7 @@ class Player {
         canvas.stroke();
         canvas.beginPath();
         canvas.fillStyle = "green";
-        canvas.rect(this.xPos - 9, this.yPos - 14, Math.min(timeDiff / (this.maxSpeed * 30), 1) * (this.boxWidth + 18), (this.boxHeight / 4) - 2);
+        canvas.rect(this.xPos - 9, this.yPos - 14, Math.min(timeDiff / (this.maxSpeed * this.chargeDivider), 1) * (this.boxWidth + 18), (this.boxHeight / 4) - 2);
         canvas.fill();
         canvas.stroke();
     }
@@ -76,7 +86,7 @@ class Player {
 
     jump() {
         if (this.yPos >= 500 - this.boxHeight)
-            this.yVel = 12;
+            this.yVel = this.jumpVel;
     }
 }
 
@@ -86,6 +96,8 @@ let BUTTONPRESSED = false;
 let startTime = Date.now();
 let timeDiff = 0;
 let AorDPressed = false;
+let orbPositions = [];
+let canvas = document.getElementById("usedCanvas").getContext("2d");
 document.addEventListener("keypress", (event) => {
     if (!BUTTONPRESSED) {
         BUTTONPRESSED = true;
@@ -121,4 +133,18 @@ document.addEventListener("keyup", (event) => {
         }
     }
 });
-setInterval(() => player.updatePos((Date.now() - startTime) * BUTTONPRESSED, AorDPressed), 16);
+
+setInterval(() => player.updatePos((Date.now() - startTime) * BUTTONPRESSED, AorDPressed, orbPositions), 16);
+setInterval(() => spawnOrb(), 1000);
+
+function spawnOrb() {
+    let xPos = Math.random() * 800;
+    let yPos = Math.random() * 140;
+    let radius = 20;
+    orbPositions.push([xPos - radius, yPos - radius]);
+    canvas.beginPath();
+    canvas.arc(xPos + 100, 500 - (yPos + 10), radius, 0, 2 * Math.PI);
+    canvas.fillStyle = "blue";
+    canvas.fill();
+    canvas.stroke();
+}
