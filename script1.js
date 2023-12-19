@@ -13,12 +13,15 @@ class Player {
         this.chargeDivider = 40;
         this.jumpVel = 13;
         this.incrementer = 0;
+        this.lastFramePressed = false;
     }
 
     updatePos(timeDiff, AorDPressed, orbs) {
         let canvas = document.getElementById("usedCanvas").getContext("2d");
         canvas.beginPath();
-        canvas.clearRect(this.xPos - 12, this.yPos - 16, this.boxWidth + 23, this.boxHeight / 4 + 2);
+        if (this.lastFramePressed)
+            canvas.clearRect(this.xPos - 12, this.yPos - 16, this.boxWidth + 23, this.boxHeight / 4 + 2);
+        this.lastFramePressed = AorDPressed;   
         canvas.clearRect(this.xPos - 2, this.yPos - 1, this.boxWidth + 3, this.boxHeight + 3);
         this.xVel += this.xAccel;
         this.xPos += this.xVel;
@@ -60,6 +63,15 @@ class Player {
         canvas.stroke();
         if (AorDPressed)
             this.createBar(canvas, timeDiff);
+        if (this.incrementer % 20 == 0 && orbs.length != 0) {
+            for (let i = 0; i < orbs.length; i++) {
+                canvas.beginPath();
+                canvas.arc(orbs[i][0] + 20, orbs[i][1] + 20, 20, 0, 2 * Math.PI);
+                canvas.fillStyle = "blue";
+                canvas.fill();
+                canvas.stroke();
+            }
+        }
     }
 
     createBar(canvas, timeDiff) {
@@ -77,9 +89,11 @@ class Player {
         dt /= this.chargeDivider;
         switch (key) {
             case "a":
+            case "A":
                 this.xVel = -Math.min(dt, this.maxSpeed);
                 break;
             case "d":
+            case "D":
                 this.xVel = Math.min(dt, this.maxSpeed); 
                 break;
         }
@@ -105,23 +119,20 @@ document.addEventListener("keypress", (event) => {
         BUTTONPRESSED = true;
         switch (event.key) {
             case "a":
+            case "A":
+            case "D":
             case "d":
                 AorDPressed = true;
                 startTime = Date.now();
                 break;
             case "s":
+            case "S":
                 player.xVel = 0;
         }
     }
-    if (event.key == "w" && !JUMPPRESSED) {
+    if (event.key == "w" || event.key == "W" && !JUMPPRESSED) {
         player.jump();
         JUMPPRESSED = true;
-    }
-
-    if (event.key == "c") {
-        console.log(orbPositions);
-        console.log(player.xPos);
-        console.log(player.yPos);
     }
 }, false);
 
@@ -131,11 +142,14 @@ document.addEventListener("keyup", (event) => {
         switch (event.key) {
             case "a":
             case "d":
+            case "A":
+            case "D":
                 timeDiff = Date.now() - startTime;
                 player.release(event.key, timeDiff);
                 AorDPressed = false;
                 break;
             case "w":
+            case "W":
                 JUMPPRESSED = false;
                 break;
         }
@@ -143,7 +157,7 @@ document.addEventListener("keyup", (event) => {
 });
 
 setInterval(() => player.updatePos((Date.now() - startTime) * BUTTONPRESSED, AorDPressed, orbPositions), 16);
-setInterval(() => spawnOrb(), 2000);
+setInterval(() => spawnOrb(), 500);
 
 function spawnOrb() {
     let xPos = Math.random() * 800;
