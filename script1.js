@@ -44,10 +44,10 @@ class Player {
             this.yPos = 500 - this.boxHeight;
 
         this.incrementer += 1;
-        if (this.incrementer % 10 == 0 && orbs.length != 0) {
+        if (this.incrementer % 2 == 0 && orbs.length != 0) {
             for (let i = 0; i < orbs.length; i++) {
                 let orb = orbs[i];
-                if (true) {
+                if (orb[0] < this.xPos + this.boxWidth && orb[0] + 40 > this.xPos && orb[1] > this.yPos - this.boxHeight && orb[1] - 40 < this.yPos) {
                     canvas.clearRect(orb[0] - 1, orb[1] - 1, 42, 42);
                     orbs.splice(i, 1);
                     i -= 1;
