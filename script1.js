@@ -7,7 +7,7 @@ class Player {
         this.yVel = 0;
         this.xAccel = 0;
         this.yAccel = -.6; // gravity
-        this.boxWidth = 60;
+        this.boxWidth = 60; //60
         this.boxHeight = 40;
         this.maxSpeed = 12;
         this.chargeDivider = 40;
@@ -157,7 +157,37 @@ document.addEventListener("keyup", (event) => {
 });
 
 setInterval(() => player.updatePos((Date.now() - startTime) * BUTTONPRESSED, AorDPressed, orbPositions), 16);
-setInterval(() => spawnOrb(), 500);
+
+progression = [
+    [20, 5],
+    [20, 6],
+    [18, 7],
+    [18, 9],
+    [16, 9]
+];
+
+let gameEnded = false;
+
+/* for (let currentStep = 0; currentStep < progression.length; i++) {
+    for (let i = 0; i < progression[currentStep][1]; i++) {
+        spawnOrb();
+    }
+    let currentTime = Date.now();
+    while (orbPositions.length != 0) {
+        if ((Date.now() - currentTime) / 1000 > progression[currentStep][0]) {
+            endGame();
+            gameEnded = true;
+            break;
+        }
+    }
+    if (gameEnded) break;
+    clearTimeout(timeOutID);
+    console.log("collected!");
+} */
+
+function endGame() {
+    player = null;
+}
 
 function spawnOrb() {
     let xPos = Math.random() * 800;
@@ -170,3 +200,16 @@ function spawnOrb() {
     canvas.fill();
     canvas.stroke();
 }
+
+/* for (let currentStep = 0; currentStep < progression.length; i++) {
+    for (let i = 0; i < progression[currentStep][1]; i++) {
+        spawnOrb();
+    }
+    let currentTime = setTimeout(() => endGame(), progression[currentStep][0]);
+    while (orbPositions.length != 0) {
+        let a = 1;
+        a += 1;
+    }
+    clearTimeout(currentTime)
+    console.log("lets go");
+} */
