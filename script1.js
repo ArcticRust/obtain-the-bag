@@ -159,34 +159,35 @@ document.addEventListener("keyup", (event) => {
 setInterval(() => player.updatePos((Date.now() - startTime) * BUTTONPRESSED, AorDPressed, orbPositions), 16);
 
 progression = [
-    [20, 5],
-    [20, 6],
-    [18, 7],
-    [18, 9],
-    [16, 9]
+    [5, 5],
+    [5, 6],
+    [5, 7],
+    [5, 9],
+    [5, 10],
+    [5, 12],
+    [4, 12],
+    [4, 15],
+    [3, 10],
+    [3, 12]
 ];
 
 let gameEnded = false;
 
-/* for (let currentStep = 0; currentStep < progression.length; i++) {
+startGame(0);
+
+function startGame(currentStep) {
     for (let i = 0; i < progression[currentStep][1]; i++) {
         spawnOrb();
     }
-    let currentTime = Date.now();
-    while (orbPositions.length != 0) {
-        if ((Date.now() - currentTime) / 1000 > progression[currentStep][0]) {
-            endGame();
-            gameEnded = true;
-            break;
-        }
-    }
-    if (gameEnded) break;
-    clearTimeout(timeOutID);
-    console.log("collected!");
-} */
+    setTimeout(() => endGame(currentStep), progression[currentStep][0] * 1000);
+}
 
-function endGame() {
-    player = null;
+function endGame(currentStep) {
+    if (orbPositions.length != 0) {
+        player = null;
+    } else {
+        startGame(currentStep + 1);
+    }
 }
 
 function spawnOrb() {
