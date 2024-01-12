@@ -79,7 +79,7 @@ class Player {
         canvas.beginPath();
         canvas.clearRect(0, 0, 1000, 200);
         canvas.rect(50, 50, 900 - .9 * (Date.now() - givenTime) / currentStepTime, 40);
-        canvas.fillStyle = "green";
+        canvas.fillStyle = "orange";
         canvas.fill();
         canvas.stroke();
     }
@@ -168,28 +168,8 @@ document.addEventListener("keyup", (event) => {
 });
 
 
-let progression = [
-    [6, 5],
-    [6, 6],
-    [6, 7],
-    [5, 5],
-    [5, 6],
-    [5, 7],
-    [5, 9],
-    [5, 10],
-    [5, 12],
-    [4.5, 12],
-    [4, 12],
-    [3.5, 10],
-    [3.5, 12],
-    [3.5, 13],
-    [3, 10],
-    [3, 11],
-    [3, 12],
-    [3, 13]
-];
 
-let currentStepTime = 6;
+let currentStepTime = 5;
 let updateInterval = setInterval(
     () => {
         document.getElementById("orbsLeft").innerHTML = "Orbs Left: " + orbPositions.length.toString();
@@ -202,11 +182,12 @@ let endTimeout;
 startGame(0);
 
 function startGame(currentStep) {
-    currentStepTime = progression[currentStep][0];
-    for (let i = 0; i < progression[currentStep][1]; i++) {
+    document.getElementById("level").innerHTML = "Level: " + (currentStep + 1).toString();
+    currentStepTime = currentStepTime * .97;
+    for (let i = 0; i < Math.floor(currentStep + 3 / 2); i++) {
         spawnOrb();
     }
-    endTimeout = setTimeout(() => endGame(currentStep), progression[currentStep][0] * 1000);
+    endTimeout = setTimeout(() => endGame(currentStep), currentStepTime * 1000);
     levelTimer = Date.now();
 }
 
@@ -215,10 +196,6 @@ function endGame(currentStep) {
         clearInterval(updateInterval);
         onGameEnd();
     } else {
-        if (currentStep + 1 == progression) {
-            alert("you win wow");
-            clearInterval(updateInterval);
-        }
         startGame(currentStep + 1);
     }
 }
@@ -245,18 +222,3 @@ function onGameEnd() {
     canvas.stroke();
     window.location.replace("gameover.html");    
 }
-
-
-
-/* for (let currentStep = 0; currentStep < progression.length; i++) {
-    for (let i = 0; i < progression[currentStep][1]; i++) {
-        spawnOrb();
-    }
-    let currentTime = setTimeout(() => endGame(), progression[currentStep][0]);
-    while (orbPositions.length != 0) {
-        let a = 1;
-        a += 1;
-    }
-    clearTimeout(currentTime)
-    console.log("lets go");
-} */
